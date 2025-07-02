@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ book.title }}</h2>
+<p><strong>Author:</strong> {{ book.author }}</p>
+<p><strong>Category:</strong> {{ book.category }}</p>
+<p><strong>Average Rating:</strong> ⭐ {{ avg_rating }}</p>
+
+<h3>User Reviews:</h3>
+<ul>
+    {% for review in book.reviews %}
+        <li><strong>{{ review.user }}</strong>: {{ review.text }}</li>
+        {% if session.get('is_admin', False) %}
+            <form method="POST" action="{{ url_for('delete_review', isbn=book.isbn, username=review.user) }}">
+                <button type="submit">Delete</button>
+            </form>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+<h3>Leave a Review:</h3>
+<form method="POST" action="{{ url_for('rate_book', isbn=book.isbn) }}">
+    <label for="rating">Rating (1-5 stars):</label>
+    <select name="rating" required>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+    </select>
+    <br>
+    <label for="review">Review:</label>
+    <textarea name="review" required></textarea>
+    <br>
+    <button type="submit">Submit Review</button>
+</form>
+{% endblock %}
